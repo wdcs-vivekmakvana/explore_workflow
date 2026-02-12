@@ -48,3 +48,49 @@ jobs:
         with:
           name: staging-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      # ✅ Email Success Notification
+      - name: Send Email (Success)
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "✅ Android Build Successful - ${{ github.ref_name }}"
+          to: parth@webcluesinfotech.com
+          from: GitHub CI <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            Android Build Successful!
+            
+            Branch: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+            Commit: ${{ github.sha }}
+            
+            You can download the APK from GitHub Actions artifacts.
+            
+            Workflow Run:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      # ❌ Email Failure Notification
+      - name: Send Email (Failure)
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ Android Build Failed - ${{ github.ref_name }}"
+          to: recipient@email.com
+          from: GitHub CI <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            Android Build Failed!
+            
+            Branch: ${{ github.ref_name }}
+            Author: ${{ github.actor }}
+            Commit: ${{ github.sha }}
+            
+            Check logs here:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
